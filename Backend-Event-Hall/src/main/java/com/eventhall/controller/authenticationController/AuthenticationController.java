@@ -10,7 +10,7 @@ import com.eventhall.dto.request.LoginDTO;
 import com.eventhall.dto.request.RegisterDTO;
 import com.eventhall.service.auth.AuthorizationService;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.springframework.web.bind.annotation.RequestBody;
 import jakarta.validation.Valid;
 
 @RestController

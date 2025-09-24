@@ -7,7 +7,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import ch.qos.logback.core.net.server.Client;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -22,14 +21,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
-@Entity
+
 @Table(name = "address")
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-
+@Entity
 public class Address extends EntityBase {
     
 	 @NotEmpty(message = "Bairro é obrigatório")
@@ -40,9 +39,9 @@ public class Address extends EntityBase {
 
 	    @NotEmpty(message = "CEP é obrigatório")
 	    @Size(min = 8, max = 8, message = "CEP deve ter exatamente 8 caracteres")
-	    @Column(name = "cep", length = 8, nullable = false)
+	    @Column(name = "zipCode", length = 8, nullable = false)
 	    @JsonProperty
-	    private String cep;
+	    private String zipCode;
 
 	    @NotEmpty(message = "Rua é obrigatório")
 	    @Size(max = 150, message = "Rua deve ter no máximo 150 caracteres")
@@ -74,6 +73,7 @@ public class Address extends EntityBase {
 	        
 		@ManyToOne(fetch = FetchType.LAZY)
 	    @JoinColumn(name = "user_id")
+		@JsonBackReference
 		private Users user;
 		
 		@ManyToOne(fetch = FetchType.LAZY)
@@ -84,6 +84,7 @@ public class Address extends EntityBase {
 		@ManyToOne(fetch = FetchType.LAZY)
 	    @JoinColumn(name = "company_id", nullable = false)
 	    @JsonIgnore
+	    @JsonBackReference
 	    private Companies company;
 
 

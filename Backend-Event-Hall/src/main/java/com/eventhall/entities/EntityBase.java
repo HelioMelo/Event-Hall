@@ -22,41 +22,26 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+public abstract class EntityBase {
 
-public class EntityBase {
-	
     @Id
-    @GeneratedValue(generator = "uuid")
-    @Column(columnDefinition = "uuid", updatable = false, nullable = false, name = "id")
+    @GeneratedValue(generator = "uuid2")
+    @Column(columnDefinition = "uuid", updatable = false, nullable = false)
     @JsonProperty
     private UUID id;
-	
-	@Column(name = "created_at", updatable = false)
-	@JsonProperty
-	@CreationTimestamp
-	private Instant created_at;
+
+    @Column(name = "created_at", updatable = false)
+    @CreationTimestamp
+    private Instant createdAt;
 
     @Column(name = "updated_at")
-    @JsonProperty
     @UpdateTimestamp
-    private Instant updated_at;
-	
-	@Column(name = "is_active")
-	@JsonProperty
-	private Boolean isActive = true;
-	
-	
-	public void setIsActive(boolean isActive) {
+    private Instant updatedAt;
+
+    @Column(name = "is_active")
+    private Boolean isActive = true;
+
+    public void setIsActive(boolean isActive) {
         this.isActive = isActive;
     }
-
-
-	@Override
-	public String toString() {
-		return "EntityBase [isActive=" + isActive + "]";
-	}
-
-
-	
-	 
 }

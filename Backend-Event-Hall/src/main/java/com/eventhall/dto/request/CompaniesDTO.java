@@ -24,7 +24,7 @@ public class CompaniesDTO {
 	public String name;
 	public DocumentTypeEnum documentType;
 	public String document;
-	public String contact;
+	public String phone;
 	public ContactTypeEnum contactType;
 	public String slug;
 	public Boolean termsOfUser;
@@ -38,9 +38,9 @@ public class CompaniesDTO {
 	this.name = company.getName(); 
 	this.documentType = company.getDocumentType(); 
 	this.document = company.getDocument(); 
-	this.contact = company.getContact(); 
+	this.phone = company.getPhone(); 
 	this.contactType = company.getContactType(); 
-	this.slug = company.getSlug(); 
+	this.slug = company.getLogoUrl(); 
 	this.termsOfUser = company.getTermsOfUser(); 
 	this.paymentActive = company.getPaymentActive(); 
 	this.createdByUser = company.getCreatedByUser(); 

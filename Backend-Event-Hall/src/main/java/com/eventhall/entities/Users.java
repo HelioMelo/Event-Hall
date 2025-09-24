@@ -26,6 +26,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -101,6 +102,9 @@ public class Users extends EntityBase implements UserDetails {
     @JoinColumn(name = "company_id", nullable = false)
     @JsonIgnore
     private Companies company;
+	
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private UserSettings settings;
     
 	public Users(String email, String password, String name, Companies company, UserTypeEnum userType) {			
 		this.email = email;

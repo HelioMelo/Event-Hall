@@ -1,11 +1,12 @@
 package com.eventhall.entities;
 
 
+import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-import com.eventhall.entities.enums.ContactTypeEnum;
-import com.eventhall.entities.enums.DocumentTypeEnum;
+import com.eventhall.entities.enums.ClientStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -24,7 +25,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,7 +39,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-//@Where(clause = "is_active = true")
 public class Client extends EntityBase {
 
 	@NotEmpty(message = "O nome do cliente é obrigatória")
@@ -46,12 +46,9 @@ public class Client extends EntityBase {
 	@Column(name = "client_name", length = 50, nullable = false)
 	@JsonProperty
 	private String name;
-
-	@NotNull (message = "Tipo de documento é obrigatório")
-	@Enumerated(EnumType.STRING)
-	@Column(name = "document_type", nullable = false)
-	@JsonProperty
-	private DocumentTypeEnum documentType;
+    
+    @Column(columnDefinition = "TEXT")
+    private String notes;
 
 	@NotEmpty(message = "Documento é obrigatório")
 	@Size(max = 14, message = "Documento deve ter no máximo 14 caracteres")
@@ -67,11 +64,16 @@ public class Client extends EntityBase {
 	@JsonProperty
 	private String contact;
 	
-    @Column(name = "contact_type", length = 11)
-    @JsonProperty
-    @Enumerated(EnumType.STRING)
-    @NotNull (message = "Tipo de contato é obrigatório")
-    private ContactTypeEnum contactType;
+	@Column(name = "birth_date", nullable = true)
+	@Past(message = "Birth date must be in the past")
+	private LocalDate birthDate;
+
+	@Column(name = "registration_date", nullable = false, updatable = false)
+	private LocalDate registrationDate;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status", nullable = false)
+	private ClientStatusEnum status;
 
 	@Size(max = 255, message = "URL do logo deve ter no máximo 255 caracteres")
 	@Column(name = "logo_url", length = 255, nullable = true)
@@ -90,6 +92,9 @@ public class Client extends EntityBase {
 	@JoinColumn(name = "client_id")
 	@JsonManagedReference
 	private Set<Address> addressList = new HashSet<>();
+	
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Event> events;
 
 
 	

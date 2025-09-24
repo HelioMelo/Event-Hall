@@ -23,6 +23,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -51,16 +52,14 @@ public class Companies extends EntityBase {
     private DocumentTypeEnum documentType;
 
     @NotEmpty(message = "Documento é obrigatório")
-    @Size(min = 14, message = "Documento deve ter 14 caracteres")
-    @Column(name = "document", length = 14, nullable = false, unique = true)
-    @JsonProperty
+    @Pattern(regexp = "\\d{14}|\\d{2}\\.\\d{3}\\.\\d{3}/\\d{4}-\\d{2}", 
+             message = "CNPJ deve ter 14 dígitos ou formato 00.000.000/0000-00")
+    @Column(name = "document", unique = true, nullable = false)
     private String document;
 
-    @Size(max = 11, message = "Contato deve ter no máximo 11 caracteres")
-    @Size(min = 8, message = "Contato deve ter no mínimo 8 caracteres")
-    @Column(name = "contact", length = 11)
-    @JsonProperty
-    private String contact;
+    @Size(min = 10, max = 15, message = "Telefone deve ter entre 10 e 15 caracteres")
+    @Column(name = "phone")
+    private String phone;
     
     @Column(name = "contact_type")
     @Enumerated(EnumType.STRING)
@@ -70,7 +69,7 @@ public class Companies extends EntityBase {
     @Size(max = 255, message = "URL do logo deve ter no máximo 255 caracteres")
     @Column(name = "logo_url", length = 255, nullable = true)
     @JsonProperty
-    private String slug;
+    private String logoUrl;
     
 	@Column(name = "terms_of_user")
 	@JsonProperty

@@ -1,35 +1,42 @@
-version: '3.8'
-
 services:
   postgres:
-    image: bitnami/postgresql:latest
+    image: postgres:15
+    container_name: eventhall-postgres
     ports:
-      - '5432:5432'
+      - "5433:5432"
     environment:
-      - POSTGRES_USER=${SPRING_DATASOURCE_USERNAME}
-      - POSTGRES_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
-      - POSTGRES_DB=${SPRING_DATASOURCE}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
-      - eventhall_pg_data:/bitnami/postgresql
+      - eventhall_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - eventhall_net
 
-  pgadmin-docker:
+  pgadmin:
     image: dpage/pgadmin4
     container_name: dev-pgadmin
     ports:
-      - '5050:80'
+      - "5050:80"
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${SPRING_DATASOURCE_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     volumes:
-      - eventhall_pgAdmin_data:/var/lib/pgadmin
+      - eventhall_pgadmin_data:/var/lib/pgadmin
     depends_on:
       - postgres
- 
+    networks:
+      - eventhall_net
+
 volumes:
   eventhall_pg_data:
-  eventhall_pgAdmin_data:
-
+  eventhall_pgadmin_data:
 
 networks:
-  pgcloudbeaver-network-external:
+  eventhall_net:
     driver: bridge
