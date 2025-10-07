@@ -8,6 +8,7 @@ import java.util.Set;
 import com.eventhall.dto.addressDTO.request.AddressRequestDTO;
 import com.eventhall.entities.enums.ClientStatusEnum;
 
+import com.eventhall.validation.constraints.ValidDocument;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -31,7 +32,7 @@ public class ClientRequestDTO {
     private String notes;
 
     @NotEmpty(message = "Documento é obrigatório")
-    @Size(min = 11, max = 14, message = "Documento deve ter entre 11 e 14 caracteres")
+    @ValidDocument
     private String document;
 
     @NotEmpty(message = "Contato é obrigatório")

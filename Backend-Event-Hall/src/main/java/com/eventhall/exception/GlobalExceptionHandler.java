@@ -20,7 +20,7 @@ import jakarta.servlet.http.HttpServletRequest;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErrorResponse> entityNotFound(EntityNotFoundException e, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleEntityNotFound(EntityNotFoundException e, HttpServletRequest request) {
         ErrorResponse err = new ErrorResponse();
         err.setTimestamp(Instant.now());
         err.setStatus(HttpStatus.NOT_FOUND.value());
@@ -30,35 +30,34 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
     }
 
-
-
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(
+            DataIntegrityViolationException ex,
+            HttpServletRequest request) {
+
         String errorMessage = ex.getMostSpecificCause().getMessage();
-
-        if (errorMessage.contains("document")) {
+        if (errorMessage == null) errorMessage = "Violação de integridade de dados";
+        else if (errorMessage.toLowerCase().contains("document"))
             errorMessage = "O documento informado já está em uso. Por favor, use um documento único.";
-        } else if (errorMessage.contains("email")) {
+        else if (errorMessage.toLowerCase().contains("email"))
             errorMessage = "O e-mail informado já está em uso. Por favor, forneça um e-mail único.";
-        }
 
-        ErrorResponse errorResponse = new ErrorResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                "Data integrity violation",
-                errorMessage,
-                ""
-        );
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "Data integrity violation",
+                        errorMessage,
+                        request.getRequestURI()
+                ));
     }
 
     @ExceptionHandler(InvalidDocumentException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidDocumentException(InvalidDocumentException ex) {
+    public ResponseEntity<ErrorResponse> handleInvalidDocumentException(InvalidDocumentException ex, HttpServletRequest request) {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 "Invalid document",
-                ex.getMessage(),
-                "N/A"
+                ex.getMessage() != null ? ex.getMessage() : "Documento inválido",
+                request.getRequestURI()
         );
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
@@ -69,8 +68,8 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.FORBIDDEN.value(),
                 "Permission Denied",
-                ex.getMessage(),
-                ""
+                ex.getMessage() != null ? ex.getMessage() : "Ação não permitida",
+                request.getRequestURI()
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
     }
@@ -81,7 +80,7 @@ public class GlobalExceptionHandler {
         List<Map<String, String>> errors = ex.getBindingResult().getFieldErrors().stream().map(fieldError -> {
             Map<String, String> error = new HashMap<>();
             error.put("field", fieldError.getField());
-            error.put("message", fieldError.getDefaultMessage());
+            error.put("message", fieldError.getDefaultMessage() != null ? fieldError.getDefaultMessage() : "Valor inválido");
             return error;
         }).collect(Collectors.toList());
 
@@ -89,7 +88,7 @@ public class GlobalExceptionHandler {
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 "Validation Failed",
-                "",
+                "Erro de validação em campos",
                 request.getRequestURI()
         );
         errorResponse.setErrors(errors);
