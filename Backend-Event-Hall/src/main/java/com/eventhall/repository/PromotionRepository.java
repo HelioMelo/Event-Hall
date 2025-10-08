@@ -11,7 +11,7 @@ import java.util.UUID;
 @Repository
 public interface PromotionRepository extends JpaRepository<Promotion, UUID> {
     boolean existsByCodeAndCompanyId(String code, UUID companyId);
-    List<Promotion> findAllByCompanyId(UUID companyId);
+    List<Promotion> findByCompanyIdAndIsActiveTrue(UUID companyId);
     Optional<Promotion> findByIdAndCompanyId(UUID id, UUID companyId);
 
 }

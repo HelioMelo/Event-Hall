@@ -1,23 +1,19 @@
 package com.eventhall.mappers.promotionMapper;
 
-
 import com.eventhall.dto.promotionDTO.request.PromotionRequestDTO;
 import com.eventhall.dto.promotionDTO.response.PromotionResponseDTO;
 import com.eventhall.entities.Promotion;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
 public class PromotionMapper {
 
-    // 🔹 Converte RequestDTO → Entity
+    // Converte RequestDTO → Entity
     public Promotion toEntity(PromotionRequestDTO dto) {
-        if (dto == null) {
-            return null;
-        }
+        if (dto == null) return null;
 
         Promotion promotion = new Promotion();
         promotion.setName(dto.getName());
@@ -27,21 +23,21 @@ public class PromotionMapper {
         promotion.setEndDate(dto.getEndDate());
         promotion.setType(dto.getType());
         promotion.setBaseValue(dto.getBaseValue());
+        promotion.setExtraGuestValue(dto.getExtraGuestValue());
         promotion.setDurationHours(dto.getDurationHours());
         promotion.setIncludedItems(dto.getIncludedItems());
+        promotion.setGuestValues(dto.getGuestValues());
+        promotion.setPaymentOptions(dto.getPaymentOptions());
         promotion.setNotes(dto.getNotes());
         promotion.setIsActive(dto.getIsActive() != null ? dto.getIsActive() : true);
         return promotion;
     }
 
-    // 🔹 Converte Entity → ResponseDTO
+    // Converte Entity → ResponseDTO
     public PromotionResponseDTO toResponseDTO(Promotion entity) {
-        if (entity == null) {
-            return null;
-        }
+        if (entity == null) return null;
 
         PromotionResponseDTO dto = new PromotionResponseDTO();
-        dto.setId(entity.getId() != null ? entity.getId() : UUID.randomUUID());
         dto.setName(entity.getName());
         dto.setCode(entity.getCode());
         dto.setDescription(entity.getDescription());
@@ -49,8 +45,11 @@ public class PromotionMapper {
         dto.setEndDate(entity.getEndDate());
         dto.setType(entity.getType());
         dto.setBaseValue(entity.getBaseValue());
+        dto.setExtraGuestValue(entity.getExtraGuestValue());
         dto.setDurationHours(entity.getDurationHours());
         dto.setIncludedItems(entity.getIncludedItems());
+        dto.setGuestValues(entity.getGuestValues());
+        dto.setPaymentOptions(entity.getPaymentOptions());
         dto.setNotes(entity.getNotes());
         dto.setIsActive(entity.getIsActive());
         dto.setCreatedAt(entity.getCreatedAt());
@@ -58,21 +57,17 @@ public class PromotionMapper {
         return dto;
     }
 
-    // 🔹 Converte Lista<Entity> → Lista<ResponseDTO>
+    // Converte Lista<Entity> → Lista<ResponseDTO>
     public List<PromotionResponseDTO> toResponseList(List<Promotion> promotions) {
-        if (promotions == null) {
-            return null;
-        }
+        if (promotions == null) return null;
         return promotions.stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
-    // 🔹 Atualiza uma entidade existente com dados de um DTO (ignora nulos)
+    // Atualiza uma entidade existente com dados de um DTO (ignora nulos)
     public void updateEntityFromDTO(PromotionRequestDTO dto, Promotion entity) {
-        if (dto == null || entity == null) {
-            return;
-        }
+        if (dto == null || entity == null) return;
 
         if (dto.getName() != null) entity.setName(dto.getName());
         if (dto.getCode() != null) entity.setCode(dto.getCode());
@@ -81,8 +76,11 @@ public class PromotionMapper {
         if (dto.getEndDate() != null) entity.setEndDate(dto.getEndDate());
         if (dto.getType() != null) entity.setType(dto.getType());
         if (dto.getBaseValue() != null) entity.setBaseValue(dto.getBaseValue());
+        if (dto.getExtraGuestValue() != null) entity.setExtraGuestValue(dto.getExtraGuestValue());
         if (dto.getDurationHours() != null) entity.setDurationHours(dto.getDurationHours());
         if (dto.getIncludedItems() != null) entity.setIncludedItems(dto.getIncludedItems());
+        if (dto.getGuestValues() != null) entity.setGuestValues(dto.getGuestValues());
+        if (dto.getPaymentOptions() != null) entity.setPaymentOptions(dto.getPaymentOptions());
         if (dto.getNotes() != null) entity.setNotes(dto.getNotes());
         if (dto.getIsActive() != null) entity.setIsActive(dto.getIsActive());
     }

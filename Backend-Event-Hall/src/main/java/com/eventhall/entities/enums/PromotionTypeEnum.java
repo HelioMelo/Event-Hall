@@ -5,5 +5,6 @@ public enum PromotionTypeEnum {
     WEDDING,
     CORPORATE,
     THEMED,
-    OTHER
+    OTHER,
+    STANDARD
 }

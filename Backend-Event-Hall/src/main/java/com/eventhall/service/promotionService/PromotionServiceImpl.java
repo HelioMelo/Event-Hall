@@ -32,11 +32,9 @@ public class PromotionServiceImpl implements IPromotionService {
     @Transactional
     public PromotionResponseDTO createPromotion(UUID companyId, PromotionRequestDTO dto) {
         Companies company = getCompany(companyId);
-
         if (promotionRepository.existsByCodeAndCompanyId(dto.getCode(), companyId)) {
             throw new IllegalArgumentException("Promotion code already exists for this company: " + dto.getCode());
         }
-
         Promotion promotion = promotionMapper.toEntity(dto);
         promotion.setCompany(company);
         Promotion saved = promotionRepository.save(promotion);
@@ -49,7 +47,6 @@ public class PromotionServiceImpl implements IPromotionService {
         getCompany(companyId);
         Promotion existing = promotionRepository.findByIdAndCompanyId(promotionId, companyId)
                 .orElseThrow(() -> new EntityNotFoundException("Promotion not found with id: " + promotionId));
-
         promotionMapper.updateEntityFromDTO(dto, existing);
         Promotion updated = promotionRepository.save(existing);
         return promotionMapper.toResponseDTO(updated);
@@ -77,7 +74,7 @@ public class PromotionServiceImpl implements IPromotionService {
     @Transactional(readOnly = true)
     public List<PromotionResponseDTO> getAllPromotions(UUID companyId) {
         getCompany(companyId);
-        List<Promotion> promotions = promotionRepository.findAllByCompanyId(companyId);
+        List<Promotion> promotions = promotionRepository.findByCompanyIdAndIsActiveTrue(companyId);
         return promotionMapper.toResponseList(promotions);
     }
 }
